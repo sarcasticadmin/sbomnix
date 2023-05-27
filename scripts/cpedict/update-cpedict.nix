@@ -9,5 +9,4 @@ pkgs.writeShellApplication rec {
   name = "update-cpedict.sh";
   text = (builtins.readFile ./update-cpedict.sh);
   runtimeInputs = with pkgs; [ coreutils curl gnugrep gnused gzip ];
-  checkPhase = true;
 }
