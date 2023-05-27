@@ -32,11 +32,15 @@ main () {
         esac
     done
     shift $((OPTIND-1))
-    
-    if [ -n "$1" ]; then
-        err_print "unexpected arguments"
-        usage; exit 1
-    fi
+
+    # DEBUG    utils.py:exec_cmd():107 Error running shell command:
+    # May 27 01:04:39 mu mu[671214]:  cmd:   'update-cpedict.sh -f /var/mu/.cache/sbomnix/cpes.csv'
+    # May 27 01:04:39 mu mu[671214]:  stdout:
+    # May 27 01:04:39 mu mu[671214]:  stderr: /nix/store/8i1w588hgk01h0aq78wsnrdlbqbk05vl-update-cpedict.sh/bin/update-cpedict.sh: line 43: $1: unbound variable
+    #if [ -n "$1" ]; then
+    #    err_print "unexpected arguments"
+    #    usage; exit 1
+    #fi
 
     if [ ! "$OUT_FILE" ]; then
         OUT_FILE="$HOME/.cache/sbomnix/cpes.csv"
@@ -74,7 +78,7 @@ main () {
 
     if ! gzip -dcf "$outdir/$CPE_GZ" | # uncompress to stdout
         # match only cpe identifiers with type 'a' (application)
-        grep -Po "cpe:2\.3:[a]:.*/>" | 
+        grep -Po "cpe:2\.3:[a]:.*/>" |
         # replace all '\:' with '!COLON!' (possible escaped ':' in cpe values)
         sed -E 's|\\:|!COLON!|g' |
         # select the three cpe values we are interested (part:vendor:product)
@@ -91,7 +95,7 @@ main () {
         exit 1
     fi
 
-    # Coarse sanity check for the outfile contents 
+    # Coarse sanity check for the outfile contents
     out_lines=$(sed -n '$=' "$outfile")
     if [ "$out_lines" -le 10000 ]; then
         err_print "unexpected output in '$outfile'"
