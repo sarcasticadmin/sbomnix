@@ -11,16 +11,9 @@ pkgs.stdenv.mkDerivation rec {
   version = pkgs.lib.removeSuffix "\n" (builtins.readFile ../../VERSION);
   src = ./update-cpedict.sh;
 
-  path = pkgs.lib.makeBinPath ([
-    pkgs.coreutils
-    pkgs.curl
-    pkgs.gnugrep
-    pkgs.gnused
-    pkgs.gzip
-  ]);
-
   checkInputs = [ pkgs.shellcheck ];
   buildInputs = [ pkgs.bash ];
+  propagatedBuildInputs = with pkgs; [ coreutils curl gnugrep gnused gzip ];
   unpackPhase = ''
     cp ${src} ${pname}
   '';
